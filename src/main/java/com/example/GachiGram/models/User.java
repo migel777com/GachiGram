@@ -8,6 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class User {
     protected String username;
@@ -103,6 +106,7 @@ public class User {
         //part 2
         Connection connection_new = getConnection();
         followers += follower+",";
+        followers = followers.substring(0, followers.length() - 1);
         String sqlStatement_new = "UPDATE users SET followers = ? WHERE user_id = ?;";
         try {
             PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
@@ -132,5 +136,71 @@ public class User {
 
         connection.close();
         return false;
+    }
+
+    public static void addFriend(int user_id,String friend) throws SQLException {
+        //part1
+        Connection connection = getConnection();
+        String followers = "";
+        String sqlStatement = "SELECT followers FROM users WHERE user_id=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setInt(1, user_id);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                followers = resultSet.getString("folllowers");
+            }
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        //deleting from followers
+        String followers_Array[] = followers.split(",");
+        List<String> followers_list = new ArrayList<>();
+        followers_list = Arrays.asList(followers_Array);
+        followers_list.remove(followers_list.size()-1);
+        followers_list.remove(friend);
+        String followers_string = "";
+        for(String s : followers_list){
+            followers_string += s;
+            followers_string += ",";
+        }
+        followers_string = followers_string.substring(0, followers_string.length() - 1);
+
+
+
+        //appending to friends
+        Connection connection_friends = getConnection();
+        String friends = "";
+        String sqlStatement_friends = "SELECT friends FROM users WHERE user_id=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement_friends);
+            ps.setInt(1, user_id);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                friends = resultSet.getString("friends");
+            }
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String new_friends = friends +","+ friend;
+
+        //part 2
+        Connection connection_new = getConnection();
+        String sqlStatement_new = "UPDATE users SET followers = ? and friends = ? WHERE user_id = ?;";
+        try {
+            PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
+            ps_new.setString(1, followers_string);
+            ps_new.setString(1, new_friends);
+            ps_new.setInt(2, user_id);
+            ps_new.executeUpdate();
+            ps_new.close();
+            connection_new.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

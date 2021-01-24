@@ -8,8 +8,8 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet("/AddFriendServlet")
-public class AddFriendServlet extends HttpServlet {
+@WebServlet("/AddFollowerServlet")
+public class AddFollowerServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -21,9 +21,13 @@ public class AddFriendServlet extends HttpServlet {
         int user_id = Integer. parseInt(session.getAttribute("userId").toString());
         String username = request.getParameter("username").trim();
         try {
-            User.addFriend(user_id,username);
+            if(User.suchUserExits(username)){
+                User.addFollower(user_id,username);
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
+        request.getRequestDispatcher("/userPage.jsp").forward(request, response);
     }
 }

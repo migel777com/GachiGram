@@ -39,7 +39,6 @@
 <%-- Friends --%>
 
 
-
 <%-- Settings --%>
 
 
@@ -54,7 +53,7 @@
         </div>
         <div class="row justify-content-center mt-4">
             <div class="col-lg-8 mx-auto mbr-form">
-                <form action="AddFriendServlet" method="POST" class="mbr-form form-with-styler mx-auto">
+                <form action="AddFollowerServlet" method="POST" class="mbr-form form-with-styler mx-auto">
 
                     <div class="dragArea row">
                         <div class="col-lg-4 col-md-12 col-sm-12 form-group">
@@ -73,28 +72,39 @@
 </section>
 
 
-
-<section class="content15 cid-smQoqhA2yf" id="content15-g">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="card col-md-12 col-lg-12">
-                <div class="card-wrapper">
-                    <div class="card-box align-left">
-                        <h4 class="card-title mbr-fonts-style mbr-white mb-3 display-5">
-                            <strong>Create Site Now</strong>
-                        </h4>
-                        <p class="mbr-text mbr-fonts-style display-7">
-                            Click any text to edit or style it. Select
-                            text to insert a link. Click blue "Gear" icon in the top right corner to hide/show buttons,
-                            text, title and change the block background. Click red "+" in the bottom right corner to add
-                            a new block. Use the top left menu to create new pages, sites and add themes.
-                        </p>
+<sql:query var="resultSet" dataSource="jdbc/db">
+    SELECT * from posts where post_author_id = ${sessionScope.userId}
+</sql:query>
+<c:forEach items="${resultSet.rows}" var="result">
+    <section class="content15 cid-smQoqhA2yf" id="content15-g">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="card col-md-12 col-lg-12">
+                    <div class="card-wrapper">
+                        <div class="card-box align-left">
+                            <h4 class="card-title mbr-fonts-style mbr-white mb-3 display-5">
+                                <strong>${result.post_title}</strong>
+                            </h4>
+                            <p class="mbr-text mbr-fonts-style display-7">
+                                    ${result.post_content}
+                            </p>
+                            <p class="card-title mbr-fonts-style mbr-white mb-3 display-5">
+                                <strong>Date: ${result.createTime}</strong>
+                            </p>
+                            <p class="card-title mbr-fonts-style mbr-white mb-3 display-5">
+                                <strong>Visibility Status: ${result.post_vis_status}</strong>
+                            </p>
+                            <p class="card-title mbr-fonts-style mbr-white mb-3 display-5">
+                                <strong>Comments Status: ${result.commendable}</strong>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</c:forEach>
+
 
 <section class="content12 cid-smQnM2cK0m" id="content12-f">
     <div class="container-fluid">
