@@ -25,5 +25,7 @@ public class AddFriendServlet extends HttpServlet {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+
+        request.getRequestDispatcher("/userPage.jsp").forward(request,response);
     }
 }

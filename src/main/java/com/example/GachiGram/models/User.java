@@ -105,7 +105,9 @@ public class User {
 
         //part 2
         Connection connection_new = getConnection();
-        followers += ",";
+        if (!followers.equals("")) {
+            followers += ",";
+        }
         followers += follower;
         String sqlStatement_new = "UPDATE users SET followers = ? WHERE username = ?;";
         try {
@@ -138,7 +140,7 @@ public class User {
         return false;
     }
 
-    public static void addFriend(int user_id, String friend, String addresser) throws SQLException {
+    public static void addFriend(int user_id, String me, String friend) throws SQLException {
         //part1
         Connection connection = getConnection();
         String followers = "";
@@ -156,17 +158,19 @@ public class User {
         }
 
         //deleting from followers
-        String followers_Array[] = followers.split(",");
-        List<String> followers_list = new ArrayList<>();
-        followers_list = Arrays.asList(followers_Array);
+        String[] followers_Array = followers.split(",");
+        List<String> followers_list;
+        followers_list = new ArrayList<>(Arrays.asList(followers_Array));
         //followers_list.remove(followers_list.size()-1);
         followers_list.remove(friend);
-        String followers_string = "";
+        StringBuilder followers_string = new StringBuilder();
         for(String s : followers_list){
-            followers_string += s;
-            followers_string += ",";
+            followers_string.append(s);
+            followers_string.append(",");
         }
-        followers_string = followers_string.substring(0, followers_string.length() - 1);
+        if (!followers_string.toString().equals("")) {
+            followers_string = new StringBuilder(followers_string.substring(0, followers_string.length() - 1));
+        }
 
 
         //appending to friends
@@ -185,15 +189,19 @@ public class User {
             e.printStackTrace();
         }
 
-        String new_friends = friends +","+ friend;
+
+        if (!friends.equals("")) {
+            friends += ",";
+        }
+        friends += friend;
 
         //part 2
         Connection connection_new = getConnection();
-        String sqlStatement_new = "UPDATE users SET followers = ? and friends = ? WHERE user_id = ?;";
+        String sqlStatement_new = "UPDATE users SET followers = ?, friends = ? WHERE user_id = ?;";
         try {
             PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
-            ps_new.setString(1, followers_string);
-            ps_new.setString(2, new_friends);
+            ps_new.setString(1, followers_string.toString().toString());
+            ps_new.setString(2, friends);
             ps_new.setInt(3, user_id);
             ps_new.executeUpdate();
             ps_new.close();
@@ -202,7 +210,7 @@ public class User {
             e.printStackTrace();
         }
         //part 3 add friend to another friend
-        User.responseFriendAddition(friend, addresser);
+        User.responseFriendAddition(me, friend);
 
     }
 
@@ -223,14 +231,16 @@ public class User {
 
         connection.close();
 
-        friendlist += ",";
+        if (!friendlist.equals("")) {
+            friendlist += ",";
+        }
         friendlist += friend;
 
         Connection connection_new = getConnection();
         String sqlStatement_new = "UPDATE users SET  friends = ? WHERE username = ?;";
         try {
             PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
-            ps_new.setString(1, friendlist );
+            ps_new.setString(1, friendlist);
             ps_new.setString(2, addresser);
             ps_new.executeUpdate();
             ps_new.close();

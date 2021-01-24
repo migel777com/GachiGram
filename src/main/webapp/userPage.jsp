@@ -66,12 +66,15 @@
                 <ul>
 
                     <%  String[] followerList = User.getFollowers(id);
-                        for(int i=0; i<followerList.length; i++){
-                            out.println("<li>"+followerList[i]+"</li>");
-                            out.println("<form action=\"AddFriendServlet\" method=\"POST\">");
-                            out.println("<input type=\"hidden\" value=\""+followerList[i]+"\" name=\"username\">");
-                            out.println("<input type=\"submit\" value=\"Accept Request\">");
-                            out.println("</form>");
+                        System.out.println(followerList.length);
+                        if (!followerList[0].equals("")) {
+                            for (String s : followerList) {
+                                out.println("<li>" + s + "</li>");
+                                out.println("<form action=\"AddFriendServlet\" method=\"POST\">");
+                                out.println("<input type=\"hidden\" value=\"" + s + "\" name=\"username\">");
+                                out.println("<input type=\"submit\" value=\"Accept Request\">");
+                                out.println("</form>");
+                            }
                         }
                     %>
                 </ul>
@@ -147,19 +150,7 @@
 </c:forEach>
 
 
-<section class="content12 cid-smQnM2cK0m" id="content12-f">
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-md-12 col-lg-10">
-                <div class="mbr-section-btn align-center">
-                    <a class="btn btn-primary display-4" href="">
-                        Sign out<br>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 <%-- Footer --%>
 <jsp:include page="footer.jsp"/>
