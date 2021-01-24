@@ -20,10 +20,10 @@
         <div class="row justify-content-center">
             <div class="media-container-column col-lg-8" >
                 <!---Formbuilder Form--->
-                <form action="createPostServlet" method="POST" class="mbr-form form-with-styler">
+                <form action="CreatePostServlet" method="POST" class="mbr-form form-with-styler">
                     <div class="dragArea row">
 
-                        <div class="col-md-4  form-group" >
+                        <div class="col-md-4  form-group">
                             <label for="name-form1-k" class="form-control-label mbr-fonts-style display-7">Title</label>
                             <input type="text" name="title" required="required" class="form-control display-7" placeholder="Title" id="name-form1-k">
                         </div>
@@ -39,6 +39,15 @@
                                 <option value="all"> All users can see this post </option>
                                 <option value="auth_only"> All authorised users can see this post</option>
                                 <option value="friends"> Only my friends can see this post </option>
+
+                            </select>
+                        </div>
+                        <div>
+                            <select name = "commendable">
+
+                                <option value="1"> People can comment this post </option>
+                                <option value="0"> People can not comment this post</option>
+
                             </select>
                         </div>
                         <div class="col-md-12 input-group-btn align-center"><button type="submit" class="btn btn-primary btn-form display-4">Create Post<br></button></div>

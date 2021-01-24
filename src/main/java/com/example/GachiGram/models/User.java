@@ -64,20 +64,73 @@ public class User {
         return id;
     }
 
-    public static void createPost(int author_id, String post_title, String post_content, String post_vis_status) throws SQLException {
+    public static void createPost(int author_id, String post_title, String post_content, String post_vis_status, int commendable) throws SQLException {
         Connection connection = getConnection();
-        String sqlStatement = "INSERT INTO posts (post_author_id, post_title, post_content,post_vis_status) VALUES (?,?,?,?);";
+        String sqlStatement = "INSERT INTO posts (post_author_id, post_title, post_content,post_vis_status, commendable) VALUES (?,?,?,?,?);";
         try {
             PreparedStatement ps = connection.prepareStatement(sqlStatement);
             ps.setInt(1, author_id);
             ps.setString(2, post_title);
             ps.setString(3, post_content);
             ps.setString(4, post_vis_status);
+            ps.setInt(5, commendable);
             ps.executeUpdate();
             ps.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void addFollower(int user_id,String follower) throws SQLException {
+        //part1
+        Connection connection = getConnection();
+        String followers = "";
+        String sqlStatement = "SELECT followers FROM users WHERE user_id=?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setInt(1, user_id);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                followers = resultSet.getString("folllowers");
+            }
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        //part 2
+        Connection connection_new = getConnection();
+        followers += follower+",";
+        String sqlStatement_new = "UPDATE users SET followers = ? WHERE user_id = ?;";
+        try {
+            PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
+            ps_new.setString(1, followers);
+            ps_new.setInt(2, user_id);
+            ps_new.executeUpdate();
+            ps_new.close();
+            connection_new.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean suchUserExits(String username) throws SQLException {
+        Connection connection = getConnection();
+        String sqlStatement = "SELECT * FROM users WHERE username = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setString(1, username);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        connection.close();
+        return false;
     }
 }

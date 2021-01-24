@@ -53,20 +53,18 @@
             </h3>
         </div>
         <div class="row justify-content-center mt-4">
-            <div class="col-lg-8 mx-auto mbr-form" data-form-type="formoid">
-                <form action="https://mobirise.eu/" method="POST" class="mbr-form form-with-styler mx-auto" data-form-title="Form Name"><input type="hidden" name="email" data-form-email="true" value="Je6AO5XeR7ZWBBiCUftBiCeOT4wC5VDBwpw5DJxhu8ypgjLXqIbQ3WpETcARDJGalgAHBniZi4/zvvRfFlAkk+nkFw1tI+vOISu1OZig0qKkcK7OSzWEek/a/XFE9t00">
-                    <div class="">
-                        <div hidden="hidden" data-form-alert="" class="alert alert-success col-12">Thanks for filling out the form!</div>
-                        <div hidden="hidden" data-form-alert-danger="" class="alert alert-danger col-12">Oops...! some problem!</div>
-                    </div>
+            <div class="col-lg-8 mx-auto mbr-form">
+                <form action="AddFriendServlet" method="POST" class="mbr-form form-with-styler mx-auto">
+
                     <div class="dragArea row">
-                        
-                        <div class="col-lg-4 col-md-12 col-sm-12 form-group" data-for="email">
-                            <input type="email" name="email" placeholder="Login" data-form-field="email" class="form-control" value="" id="email-form8-q">
+                        <div class="col-lg-4 col-md-12 col-sm-12 form-group">
+                            <input type="name" name="username" placeholder="Type username"  class="form-control"  id="email-form8-q">
                         </div>
+
                         <div class="col-lg-4 col-md-12 col-sm-12 mbr-section-btn align-center">
-                            <button type="submit" class="btn btn-primary display-4">Submit</button>
+                            <button type="submit" class="btn btn-primary display-4">Send request</button>
                         </div>
+
                     </div>
                 </form>
             </div>

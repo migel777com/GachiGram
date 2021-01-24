@@ -11,9 +11,16 @@ public class TokenFilter implements Filter {
 
         String uri = ((HttpServletRequest)servletRequest).getRequestURL().toString();
         String pageName = uri.substring(uri.lastIndexOf("/")+1);
+        System.out.println(pageName);
+
+        String middle = uri.substring(uri.lastIndexOf(".")+1);
+        if (middle.equals("css") || middle.equals("png") || middle.equals("js") || middle.equals("jpg")) {
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
 
         HttpSession session = ((HttpServletRequest)servletRequest).getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
+        if (session == null ||  session.getAttribute("userId") == null) {
             if (pageName.equals("index.jsp") || pageName.equals("register.jsp") || pageName.equals("logServlet")) {
                 filterChain.doFilter(servletRequest, servletResponse);
                 return;
