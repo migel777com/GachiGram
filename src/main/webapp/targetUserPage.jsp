@@ -16,10 +16,17 @@
     }
     int str2 = Integer.parseInt(request.getParameter("targetId"));
     String temp = User.isFriends(str1, str2);
-    out.println(temp);
-    System.out.println(temp);
+    //out.println(temp);
+    //System.out.println(temp);
     session.setAttribute("logic_cond", temp);
 %>
+
+<c:if test="${sessionScope.logic_cond == 'yes'}">
+    <c:set var="logical" value="yes" />
+</c:if>
+<c:if test="${sessionScope.logic_cond == 'no'}">
+    <c:set var="logical" value="no" />
+</c:if>
 
 <%-- Content --%>
 <%-- User Info --%>
@@ -68,7 +75,8 @@
                                 <%-- Auth --%>
                                 <c:when test="${result.post_vis_status == 'auth_only' && sessionScope.userId == null}"> </c:when>
                                 <%-- Friends --%>
-                                <c:when test="${result.post_vis_status == 'friends' && sessionScore.logic_cond == 'no' }"> </c:when>
+
+                                <c:when test="${result.post_vis_status == 'friends' && logical == 'no' }"> </c:when>
                                 <%-- All --%>
                                 <c:otherwise>
                                     <div class="card-wrapper">
