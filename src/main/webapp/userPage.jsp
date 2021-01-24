@@ -47,7 +47,8 @@
                     <%  int id = Integer.parseInt(session.getAttribute("userId").toString());
                         String[] friendlist = User.getFriends(id);
                         for(int i=0; i<friendlist.length; i++){
-                            out.println("<li>"+friendlist[i]+"</li>");
+                            int target_id = User.getUser(friendlist[i]);
+                            out.println("<li><a href=\"targetUserPage.jsp?targetId="+target_id+"\">"+friendlist[i]+"</a></li>");
                         }
                     %>
                 </ul>
@@ -66,10 +67,11 @@
                 <ul>
 
                     <%  String[] followerList = User.getFollowers(id);
-                        System.out.println(followerList.length);
+                        //System.out.println(followerList.length);
                         if (!followerList[0].equals("")) {
                             for (String s : followerList) {
-                                out.println("<li>" + s + "</li>");
+                                int target_id = User.getUser(s);
+                                out.println("<li><a href=\"targetUserPage.jsp?targetId="+target_id+"\">" + s + "</a></li>");
                                 out.println("<form action=\"AddFriendServlet\" method=\"POST\">");
                                 out.println("<input type=\"hidden\" value=\"" + s + "\" name=\"username\">");
                                 out.println("<input type=\"submit\" value=\"Accept Request\">");

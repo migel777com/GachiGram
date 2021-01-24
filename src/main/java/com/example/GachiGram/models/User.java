@@ -320,5 +320,23 @@ public class User {
         }
         return "no";
     }
+    
+
+    public static int getUser(String name) {
+        Connection connection = getConnection();
+        String sqlStatement = "SELECT user_id FROM users WHERE username = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setString(1, name);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                return resultSet.getInt("user_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 
 }
