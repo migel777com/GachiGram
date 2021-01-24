@@ -320,7 +320,7 @@ public class User {
         }
         return "no";
     }
-    
+
 
     public static int getUser(String name) {
         Connection connection = getConnection();

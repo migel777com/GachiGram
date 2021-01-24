@@ -46,9 +46,11 @@
                 <ul>
                     <%  int id = Integer.parseInt(session.getAttribute("userId").toString());
                         String[] friendlist = User.getFriends(id);
-                        for(int i=0; i<friendlist.length; i++){
-                            int target_id = User.getUser(friendlist[i]);
-                            out.println("<li><a href=\"targetUserPage.jsp?targetId="+target_id+"\">"+friendlist[i]+"</a></li>");
+                        if (!friendlist[0].equals("")) {
+                            for(int i=0; i<friendlist.length; i++){
+                                int target_id = User.getUser(friendlist[i]);
+                                out.println("<li><a href=\"targetUserPage.jsp?targetId="+target_id+"\">"+friendlist[i]+"</a></li>");
+                            }
                         }
                     %>
                 </ul>
@@ -117,6 +119,14 @@
     </div>
 </section>
 
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-12 col-lg-10 align-center">
+            <div class="mbr-section-btn align-center"><a class="btn btn-primary display-4" href="createPost.jsp">Create Post<br></a></div>
+        </div>
+    </div>
+</div>
+
 
 <sql:query var="resultSet" dataSource="jdbc/db">
     SELECT * from posts where post_author_id = ${sessionScope.userId}
@@ -145,6 +155,62 @@
                             </p>
                         </div>
                     </div>
+                        <%-- Comments Block --%>
+                    <sql:query var="commentsSet" dataSource="jdbc/db">
+                        SELECT * from comments where comment_post_id = ${result.post_id}
+                    </sql:query>
+                    <c:choose>
+                        <c:when test="${commentsSet.rowCount == 0}">
+                            <div class="card-wrapper">
+                                <div class="card-box align-left">
+                                    <h4 class="card-title mbr-fonts-style mbr-white mb-3 display-8">
+                                        <strong>- THERE IS NO COMMENTS TO DISPLAY -</strong>
+                                    </h4>
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach items="${commentsSet.rows}" var="resultForComments">
+                                <sql:query var="commentAutor" dataSource="jdbc/db">
+                                    SELECT username FROM users WHERE user_id = ${resultForComments.comment_author_id}
+                                </sql:query>
+                                <div class="card-wrapper">
+                                    <div class="card-box align-right">
+                                        <h4 class="card-title mbr-fonts-style mbr-white mb-3 display-8">
+                                            <c:forEach items="${commentAutor.rows}" var="autorName">
+                                                <strong>Comment<br>Author: ${autorName.username}</strong>
+                                            </c:forEach>
+                                        </h4>
+                                        <p class="mbr-text mbr-fonts-style display-8">
+                                                ${resultForComments.comment_content}
+                                        </p>
+                                        <p class="card-title mbr-fonts-style mbr-white mb-3 display-8">
+                                            <strong>Date: ${resultForComments.createTime}</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+
+                        <%-- Leave Comment --%>
+                    <c:choose>
+                        <c:when test="${result.commendable == true}">
+                            <form action="LeaveCommentServlet" method="post" class="mbr-form form-with-styler mx-auto">
+                                <div class="dragArea row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                                        <input type="hidden" name="target_id" class="form-control" id="target-id-form6-5" value="myPage">
+                                        <input type="hidden" name="comment_post_id" class="form-control" id="post-id-form6-5" value="${result.post_id}">
+                                        <input type="text" name="comment_content" placeholder="Content" class="form-control" id="content-form6-5" required>
+                                    </div>
+                                    <div class="col-auto mbr-section-btn align-center"><button type="submit" name="submit" class="btn btn-primary display-4">Leave Comment<br></button></div>
+                                </div>
+                            </form>
+                        </c:when>
+                    </c:choose>
+                        <%-- Leave Comment END --%>
+                        <%-- Comments Block END --%>
+                    <br><br><br>
                 </div>
             </div>
         </div>

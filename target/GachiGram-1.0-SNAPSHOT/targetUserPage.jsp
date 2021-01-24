@@ -115,10 +115,15 @@
                                         </c:when>
                                         <c:otherwise>
                                             <c:forEach items="${commentsSet.rows}" var="resultForComments">
+                                                <sql:query var="commentAutor" dataSource="jdbc/db">
+                                                    SELECT username FROM users WHERE user_id = ${resultForComments.comment_author_id}
+                                                </sql:query>
                                                 <div class="card-wrapper">
                                                     <div class="card-box align-right">
                                                         <h4 class="card-title mbr-fonts-style mbr-white mb-3 display-8">
-                                                            <strong>Comment<br>Author: ${resultForComments.comment_author_id}</strong>
+                                                            <c:forEach items="${commentAutor.rows}" var="autorName">
+                                                                <strong>Comment<br>Author: ${autorName.username}</strong>
+                                                            </c:forEach>
                                                         </h4>
                                                         <p class="mbr-text mbr-fonts-style display-8">
                                                                 ${resultForComments.comment_content}

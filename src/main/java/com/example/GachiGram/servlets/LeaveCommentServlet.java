@@ -21,6 +21,9 @@ public class LeaveCommentServlet extends HttpServlet {
 
         User.saveComment(post_id, author_id, content);
 
+        if (request.getParameter("target_id").equals("myPage")) {
+            request.getRequestDispatcher("userPage.jsp").forward(request, response);
+        }
         String target_id = request.getParameter("target_id").trim();
         request.getRequestDispatcher("targetUserPage.jsp?targetId="+target_id).forward(request, response);
     }
