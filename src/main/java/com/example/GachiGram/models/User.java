@@ -311,4 +311,14 @@ public class User {
         }
     }
 
+    public static String isFriends(String username, String user_id) throws SQLException {
+        String[] friends = getFriends(Integer.parseInt(user_id));
+        for (int i = 0; i < friends.length; i++) {
+            if (friends[i].equals(username)) {
+                return "yes";
+            }
+        }
+        return "no";
+    }
+
 }

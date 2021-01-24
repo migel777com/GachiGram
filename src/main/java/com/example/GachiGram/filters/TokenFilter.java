@@ -21,7 +21,7 @@ public class TokenFilter implements Filter {
 
         HttpSession session = ((HttpServletRequest)servletRequest).getSession(false);
         if (session == null ||  session.getAttribute("userId") == null) {
-            if (pageName.equals("index.jsp") || pageName.equals("register.jsp") || pageName.equals("logServlet")) {
+            if (pageName.equals("index.jsp") || pageName.equals("register.jsp") || pageName.equals("logServlet") || pageName.equals("targetUserPage.jsp")) {
                 filterChain.doFilter(servletRequest, servletResponse);
                 return;
             }
