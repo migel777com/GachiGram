@@ -85,17 +85,17 @@ public class User {
         }
     }
 
-    public static void addFollower(int user_id,String follower) throws SQLException {
+    public static void addFollower(String follower, String addresser) throws SQLException {
         //part1
         Connection connection = getConnection();
         String followers = "";
-        String sqlStatement = "SELECT followers FROM users WHERE user_id=?";
+        String sqlStatement = "SELECT followers FROM users WHERE username=?";
         try {
             PreparedStatement ps = connection.prepareStatement(sqlStatement);
-            ps.setInt(1, user_id);
+            ps.setString(1, addresser);
             ResultSet resultSet = ps.executeQuery();
             if(resultSet.next()){
-                followers = resultSet.getString("folllowers");
+                followers = resultSet.getString("followers");
             }
             connection.close();
         } catch (SQLException e) {
@@ -105,13 +105,13 @@ public class User {
 
         //part 2
         Connection connection_new = getConnection();
-        followers += follower+",";
-        followers = followers.substring(0, followers.length() - 1);
-        String sqlStatement_new = "UPDATE users SET followers = ? WHERE user_id = ?;";
+        followers += ",";
+        followers += follower;
+        String sqlStatement_new = "UPDATE users SET followers = ? WHERE username = ?;";
         try {
             PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
             ps_new.setString(1, followers);
-            ps_new.setInt(2, user_id);
+            ps_new.setString(2, addresser);
             ps_new.executeUpdate();
             ps_new.close();
             connection_new.close();
@@ -138,7 +138,7 @@ public class User {
         return false;
     }
 
-    public static void addFriend(int user_id,String friend) throws SQLException {
+    public static void addFriend(int user_id, String friend, String addresser) throws SQLException {
         //part1
         Connection connection = getConnection();
         String followers = "";
@@ -148,7 +148,7 @@ public class User {
             ps.setInt(1, user_id);
             ResultSet resultSet = ps.executeQuery();
             if(resultSet.next()){
-                followers = resultSet.getString("folllowers");
+                followers = resultSet.getString("followers");
             }
             connection.close();
         } catch (SQLException e) {
@@ -159,7 +159,7 @@ public class User {
         String followers_Array[] = followers.split(",");
         List<String> followers_list = new ArrayList<>();
         followers_list = Arrays.asList(followers_Array);
-        followers_list.remove(followers_list.size()-1);
+        //followers_list.remove(followers_list.size()-1);
         followers_list.remove(friend);
         String followers_string = "";
         for(String s : followers_list){
@@ -169,19 +169,18 @@ public class User {
         followers_string = followers_string.substring(0, followers_string.length() - 1);
 
 
-
         //appending to friends
         Connection connection_friends = getConnection();
         String friends = "";
         String sqlStatement_friends = "SELECT friends FROM users WHERE user_id=?";
         try {
-            PreparedStatement ps = connection.prepareStatement(sqlStatement_friends);
+            PreparedStatement ps = connection_friends.prepareStatement(sqlStatement_friends);
             ps.setInt(1, user_id);
             ResultSet resultSet = ps.executeQuery();
             if(resultSet.next()){
                 friends = resultSet.getString("friends");
             }
-            connection.close();
+            connection_friends.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -194,8 +193,45 @@ public class User {
         try {
             PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
             ps_new.setString(1, followers_string);
-            ps_new.setString(1, new_friends);
-            ps_new.setInt(2, user_id);
+            ps_new.setString(2, new_friends);
+            ps_new.setInt(3, user_id);
+            ps_new.executeUpdate();
+            ps_new.close();
+            connection_new.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //part 3 add friend to another friend
+        User.responseFriendAddition(friend, addresser);
+
+    }
+
+    public static void responseFriendAddition(String friend, String addresser) throws SQLException {
+        Connection connection = getConnection();
+        String friendlist = "";
+        String sqlStatement = "SELECT friends FROM users WHERE username = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setString(1, addresser);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                friendlist = resultSet.getString("friends");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        connection.close();
+
+        friendlist += ",";
+        friendlist += friend;
+
+        Connection connection_new = getConnection();
+        String sqlStatement_new = "UPDATE users SET  friends = ? WHERE username = ?;";
+        try {
+            PreparedStatement ps_new = connection_new.prepareStatement(sqlStatement_new);
+            ps_new.setString(1, friendlist );
+            ps_new.setString(2, addresser);
             ps_new.executeUpdate();
             ps_new.close();
             connection_new.close();
@@ -203,4 +239,66 @@ public class User {
             e.printStackTrace();
         }
     }
+
+    public static String[] getFollowers(int user_id) throws SQLException {
+        Connection connection = getConnection();
+        String followers = "";
+        String sqlStatement = "SELECT followers FROM users WHERE user_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setInt(1, user_id);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                followers = resultSet.getString("followers");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String[] followerList = followers.split(",");
+        for(int i = 0; i< followerList.length; i++){
+            System.out.println(followerList[i]);
+        }
+        connection.close();
+        return followerList;
+
+    }
+
+    public static String[] getFriends(int user_id) throws SQLException {
+        Connection connection = getConnection();
+        String friends = "";
+        String sqlStatement = "SELECT friends FROM users WHERE user_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setInt(1, user_id);
+            ResultSet resultSet = ps.executeQuery();
+            if(resultSet.next()){
+                friends = resultSet.getString("friends");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String[] friendList = friends.split(",");
+        connection.close();
+        return friendList;
+
+    }
+
+    public static void saveComment(int comment_post_id, int comment_author_id, String comment_content) {
+        Connection connection = getConnection();
+        String sqlStatement = "INSERT INTO comments (comment_post_id, comment_author_id, comment_content) VALUES (?,?,?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sqlStatement);
+            ps.setInt(1, comment_post_id);
+            ps.setInt(2, comment_author_id);
+            ps.setString(3, comment_content);
+            ps.executeUpdate();
+            ps.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

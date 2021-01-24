@@ -18,13 +18,14 @@ public class LogServlet extends HttpServlet {
         int id = -1;
 
         try {
-            id = User.logInUser(username,password);
+            id = User.logInUser(username, password);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
         if (id != -1) {
             session.setAttribute("userId", id);
+            session.setAttribute("username", username);
             session.setMaxInactiveInterval(15*60);
             request.getRequestDispatcher("userPage.jsp").forward(request, response);
         }

@@ -1,7 +1,8 @@
-
+<%@ page import="com.example.GachiGram.models.User" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- Header --%>
 <jsp:include page="header.jsp"/>
@@ -37,7 +38,47 @@
 </section>
 
 <%-- Friends --%>
+<section class="content5 cid-smQnLb9uaS" id="content5-e">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-12 col-lg-10">
+                Friends list:
+                <ul>
+                    <%  int id = Integer.parseInt(session.getAttribute("userId").toString());
+                        String[] friendlist = User.getFriends(id);
+                        for(int i=0; i<friendlist.length; i++){
+                            out.println("<li>"+friendlist[i]+"</li>");
+                        }
+                    %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
 
+<%-- followers --%>
+<section class="content5 cid-smQnLb9uaS" id="content5-e">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-12 col-lg-10">
+
+                Friend Requests list:
+                <ul>
+
+                    <%  String[] followerList = User.getFollowers(id);
+                        for(int i=0; i<followerList.length; i++){
+                            out.println("<li>"+followerList[i]+"</li>");
+                            out.println("<form action=\"AddFriendServlet\" method=\"POST\">");
+                            out.println("<input type=\"hidden\" value=\""+followerList[i]+"\" name=\"username\">");
+                            out.println("<input type=\"submit\" value=\"Accept Request\">");
+                            out.println("</form>");
+                        }
+                    %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
 
 <%-- Settings --%>
 
